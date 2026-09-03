@@ -10,6 +10,31 @@ glm::vec2 BoundedAreaRule::computeForce(const std::vector<BoidView>& neighborhoo
 
   // begin solution
 
+  float tempForce = 0.0f;
+
+  const float width = displaySize.x;
+  const float height = displaySize.y;
+
+  const glm::vec2 worldBorder(width, height);
+  const glm::vec2 zeroVec(0.0f);
+
+  if (boid.position.x > worldBorder.x - (float)desiredDistance) {
+    tempForce = (float)desiredDistance / abs(boid.position.x - worldBorder.x);
+  }
+
+  else if (boid.position.x < zeroVec.x + (float)desiredDistance) {
+    tempForce = (float)desiredDistance / abs(boid.position.x - zeroVec.x);
+  }
+
+  else if (boid.position.y > worldBorder.y - (float)desiredDistance) {
+    tempForce = (float)desiredDistance / abs(boid.position.y - worldBorder.y);
+  }
+
+  else if (boid.position.y < zeroVec.y + (float)desiredDistance) {
+    tempForce = (float)desiredDistance / abs(boid.position.y - zeroVec.y);
+  }
+
+  force += /*dir **/ tempForce;
   // end solution
 
   return force;
