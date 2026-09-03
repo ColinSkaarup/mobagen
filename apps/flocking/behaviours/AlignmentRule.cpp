@@ -7,6 +7,18 @@ glm::vec2 AlignmentRule::computeForce(const std::vector<BoidView>& neighborhood,
 
   // begin solution
 
+  if (neighborhood.empty()) {
+    return averageVelocity;
+  }
+
+  for (const BoidView neighbor : neighborhood) {
+    if (glm::distance(boid.position, neighbor.position) <= 0.0001f) {
+      continue;
+    }
+    averageVelocity += neighbor.velocity;
+  }
+
+  averageVelocity /= neighborhood.size();
 
   return averageVelocity;
   // end solution
