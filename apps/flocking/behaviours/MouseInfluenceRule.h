@@ -6,7 +6,7 @@
 class MouseInfluenceRule : public FlockingRule {
 private:
   bool isRepulsive;
-
+  float mouseInfluenceRadius = 300.0f;
 public:
   explicit MouseInfluenceRule(float weight = 1.f, bool isRepulsive_ = false, bool isEnabled = true)
       : FlockingRule(Color::Magenta, weight, isEnabled), isRepulsive(isRepulsive_) {}

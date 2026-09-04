@@ -10,6 +10,27 @@ glm::vec2 MouseInfluenceRule::computeForce(const std::vector<BoidView>& neighbor
 
   // begin solution
 
+  if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+    const ImVec2 mousePos = ImGui::GetIO().MousePos;
+    const glm::vec2 mouseVec = {mousePos.x, mousePos.y};
+    float mouseDist = glm::distance(boid.position, mouseVec);
+
+    if (mouseDist <= 0.1f)
+      return force;
+
+    float mouseForce = mouseInfluenceRadius / mouseDist;
+
+    glm::vec2 dir = {0.0f, 0.0f};
+    if (!isRepulsive) {
+      dir = glm::normalize(mouseVec - boid.position);
+    }
+    else {
+      dir = glm::normalize(boid.position - mouseVec);
+    }
+
+    force += clamp(dir * mouseForce, -50.0f, 50.0f);
+  }
+
   // end solution
 
   return force;
@@ -17,6 +38,8 @@ glm::vec2 MouseInfluenceRule::computeForce(const std::vector<BoidView>& neighbor
 
 bool MouseInfluenceRule::drawImguiRuleExtra() {
   bool valueHasChanged = false;
+
+  ImGui::DragFloat("Mouse Effect Radius", &mouseInfluenceRadius, 1, 0);
 
   if (ImGui::RadioButton("Attractive", !isRepulsive)) {
     isRepulsive = false;
