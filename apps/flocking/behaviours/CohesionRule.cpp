@@ -26,7 +26,8 @@ glm::vec2 CohesionRule::computeForce(const std::vector<BoidView>& neighborhood, 
 
   glm::vec2 dir = glm::normalize(avgCenter - boid.position);
 
-  cohesionForce += dir * force;
+  if (force > 0.0001f)
+    cohesionForce += dir * force;
   // end solution
 
   return cohesionForce;
