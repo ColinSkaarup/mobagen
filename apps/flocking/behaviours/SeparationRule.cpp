@@ -18,7 +18,7 @@ glm::vec2 SeparationRule::computeForce(const std::vector<BoidView>& neighborhood
 
   for (const BoidView neighbor : neighborhood) {
 
-    //maybe change to (target - boid) / distance
+
     if (glm::distance(boid.position, neighbor.position) <= 0.0001f) {
       continue;
     }
