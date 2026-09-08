@@ -3,6 +3,7 @@
 #include "../fsm/AgentContext.h"
 #include "../fsm/Condition.h"
 
+#include <iostream>
 #include <SDL3/SDL_log.h>
 
 #include <stdexcept>
@@ -24,6 +25,10 @@ class Underpopulation : public Condition {
 public:
   bool Test(const AgentContext& context) override {
     // todo: implement the underpopulation condition
+    if (context.aliveNeighbors < 2) {
+      return true;
+    }
+    return false;
     throw std::logic_error("Underpopulation condition not implemented yet");
   }
 };
@@ -32,6 +37,9 @@ class Overpopulation : public Condition {
 public:
   bool Test(const AgentContext& context) override {
     // todo: implement the overpopulation condition
+    if (context.aliveNeighbors > 3)
+      return true;
+    return false;
     throw std::logic_error("Overpopulation condition not implemented yet");
   }
 };
@@ -40,6 +48,9 @@ class Reproduction : public Condition {
 public:
   bool Test(const AgentContext& context) override {
     // todo: implement the reproduction condition
+    if (context.aliveNeighbors == 3)
+      return true;
+    return false;
     throw std::logic_error("Reproduction condition not implemented yet");
   }
 };
@@ -51,7 +62,8 @@ public:
     // hint:
     //   use the context.world.SetNext() to set the next state of the cell to dead
     //   use the context.position to get the current cell's position
-    throw std::logic_error("Die action not implemented yet");
+    context.world.SetNext(context.position, false);
+    //throw std::logic_error("Die action not implemented yet");
   }
 };
 
@@ -59,7 +71,8 @@ class BornAction : public Action {
 public:
   void Execute(const AgentContext& context) override {
     // see hints in DieAction
-    throw std::logic_error("Born action not implemented yet");
+    context.world.SetNext(context.position, true);
+    //throw std::logic_error("Born action not implemented yet");
   }
 };
 
@@ -67,7 +80,8 @@ class StayAliveAction : public Action {
 public:
   void Execute(const AgentContext& context) override {
     // see hints in DieAction
-    throw std::logic_error("StayAlive action not implemented yet");
+    context.world.SetNext(context.position, true);
+    //throw std::logic_error("StayAlive action not implemented yet");
   }
 };
 
@@ -75,7 +89,8 @@ class StayDeadAction : public Action {
 public:
   void Execute(const AgentContext& context) override {
     // see hints in DieAction
-    throw std::logic_error("StayDead action not implemented yet");
+    context.world.SetNext(context.position, context.isAlive);
+    //throw std::logic_error("StayDead action not implemented yet");
   }
 };
 }  // namespace conway
@@ -98,7 +113,13 @@ JohnConway::JohnConway() {
   // begin solution
   // note: log instead of throw - the constructor runs at app startup and at
   // every fixture load; throwing here would kill the process before it runs.
-  SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "JohnConway: transitions and actions for alive and dead states not implemented yet");
+  alive->AddTransition(std::make_shared<Underpopulation>(), dead, {die});
+  std::cout << "CONWAY: Added Transition - Underpopulation \n";
+  alive->AddTransition(std::make_shared<Overpopulation>(), dead, {die});
+  std::cout << "CONWAY: Added Transition - Overpopulation \n";
+  dead->AddTransition(std::make_shared<Reproduction>(), alive, {born});
+  std::cout << "CONWAY: Added Transition - Reproduction \n";
+  //SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "JohnConway: transitions and actions for alive and dead states not implemented yet");
 
   // end solution
 }
@@ -133,7 +154,16 @@ int JohnConway::CountNeighbors(World& world, Point2D point) {
   //   world.Get({point.x + dx, point.y + dy}) wraps around the borders (toroidal)
   // begin solution
 
-  throw std::logic_error("CountNeighbors not implemented yet");
+  int neighbors = 0;
+
+  for (int y = -1; y < 2; y++) {
+    for (int x = -1; x < 2; x++) {
+      if (x == 0 && y == 0) { continue;}
+      neighbors += world.Get({point.x + x, point.y + y}) ? 1 : 0;
+    }
+  }
+  return neighbors;
+  //throw std::logic_error("CountNeighbors not implemented yet");
 
   // end solution
 }
