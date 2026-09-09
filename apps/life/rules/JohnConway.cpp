@@ -29,7 +29,6 @@ public:
       return true;
     }
     return false;
-    throw std::logic_error("Underpopulation condition not implemented yet");
   }
 };
 
@@ -40,7 +39,6 @@ public:
     if (context.aliveNeighbors > 3)
       return true;
     return false;
-    throw std::logic_error("Overpopulation condition not implemented yet");
   }
 };
 
@@ -51,7 +49,6 @@ public:
     if (context.aliveNeighbors == 3)
       return true;
     return false;
-    throw std::logic_error("Reproduction condition not implemented yet");
   }
 };
 
@@ -63,7 +60,6 @@ public:
     //   use the context.world.SetNext() to set the next state of the cell to dead
     //   use the context.position to get the current cell's position
     context.world.SetNext(context.position, false);
-    //throw std::logic_error("Die action not implemented yet");
   }
 };
 
@@ -72,7 +68,6 @@ public:
   void Execute(const AgentContext& context) override {
     // see hints in DieAction
     context.world.SetNext(context.position, true);
-    //throw std::logic_error("Born action not implemented yet");
   }
 };
 
@@ -81,7 +76,6 @@ public:
   void Execute(const AgentContext& context) override {
     // see hints in DieAction
     context.world.SetNext(context.position, true);
-    //throw std::logic_error("StayAlive action not implemented yet");
   }
 };
 
@@ -90,7 +84,6 @@ public:
   void Execute(const AgentContext& context) override {
     // see hints in DieAction
     context.world.SetNext(context.position, context.isAlive);
-    //throw std::logic_error("StayDead action not implemented yet");
   }
 };
 }  // namespace conway
@@ -114,12 +107,16 @@ JohnConway::JohnConway() {
   // note: log instead of throw - the constructor runs at app startup and at
   // every fixture load; throwing here would kill the process before it runs.
   alive->AddTransition(std::make_shared<Underpopulation>(), dead, {die});
-  std::cout << "CONWAY: Added Transition - Underpopulation \n";
+  SDL_Log("CONWAY: Added Transition - Underpopulation \n");
   alive->AddTransition(std::make_shared<Overpopulation>(), dead, {die});
-  std::cout << "CONWAY: Added Transition - Overpopulation \n";
+  SDL_Log("CONWAY: Added Transition - Overpopulation \n");
+  alive->AddAction(std::make_shared<StayAliveAction>());
+  SDL_Log("CONWAY: Added Action - StayAliveAction \n");
+
   dead->AddTransition(std::make_shared<Reproduction>(), alive, {born});
-  std::cout << "CONWAY: Added Transition - Reproduction \n";
-  //SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "JohnConway: transitions and actions for alive and dead states not implemented yet");
+  SDL_Log("CONWAY: Added Transition - Reproduction \n");
+  dead->AddAction(std::make_shared<StayDeadAction>());
+  SDL_Log("CONWAY: Added Action - StayDeadAction \n");
 
   // end solution
 }
@@ -163,7 +160,6 @@ int JohnConway::CountNeighbors(World& world, Point2D point) {
     }
   }
   return neighbors;
-  //throw std::logic_error("CountNeighbors not implemented yet");
 
   // end solution
 }
