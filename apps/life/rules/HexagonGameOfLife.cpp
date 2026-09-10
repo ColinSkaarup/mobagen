@@ -177,21 +177,35 @@ int HexagonGameOfLife::CountNeighbors(World& world, Point2D point) {
   //(-1, 0) (1, 0)
   //(0, 1) (1, 1)
 
+  std::pair<int, int> evenCoords[3][2] = {
+    std::pair(-1, -1), std::pair(0, -1),
+    std::pair(-1, 0), std::pair(1, 0),
+    std::pair(-1, 1), std::pair(0, 1)
+  };
+
+  std::pair<int, int> oddCoords[3][2] = {
+    std::pair(0, -1), std::pair(1, -1),
+    std::pair(-1, 0), std::pair(1, 0),
+    std::pair(0, 1), std::pair(1, 1)
+  };
+
   bool isEven = point.x % 2 == 0;
 
   if (isEven) {
-
-  }
-  else {
-    
-  }
-
-  for (int y = -1; y < 2; y++) {
-    for (int x = -1; x < 2; x+=2) {
-      if (x == 0 && y == 0) { continue;}
-      neighbors += world.Get({point.x + x, point.y + y}) ? 1 : 0;
+    for (int i = 0; i <3; i++) {
+      for (int j = 0; j < 2; j++) {
+        neighbors += world.Get({point.x + evenCoords[i][j].first, point.y + evenCoords[i][j].second})? 1 : 0;
+      }
     }
   }
+  else {
+    for (int i = 0; i <3; i++) {
+      for (int j = 0; j < 2; j++) {
+        neighbors += world.Get({point.x + oddCoords[i][j].first, point.y + oddCoords[i][j].second})? 1 : 0;
+      }
+    }
+  }
+
   return neighbors;
 
   throw std::logic_error("CountNeighbors not implemented yet");
