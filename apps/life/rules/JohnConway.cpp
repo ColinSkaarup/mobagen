@@ -83,7 +83,7 @@ class StayDeadAction : public Action {
 public:
   void Execute(const AgentContext& context) override {
     // see hints in DieAction
-    context.world.SetNext(context.position, context.isAlive);
+    context.world.SetNext(context.position, false);
   }
 };
 }  // namespace conway

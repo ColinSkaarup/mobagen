@@ -35,7 +35,6 @@ public:
     if (context.aliveNeighbors < 3)
       return true;
     return false;
-    throw std::logic_error("Underpopulation condition not implemented yet");
   }
 };
 
@@ -47,7 +46,6 @@ public:
     if (context.aliveNeighbors > 4)
       return true;
     return false;
-    throw std::logic_error("Overpopulation condition not implemented yet");
   }
 };
 
@@ -59,7 +57,6 @@ public:
     if (context.aliveNeighbors == 2)
       return true;
     return false;
-    throw std::logic_error("Reproduction condition not implemented yet");
   }
 };
 
@@ -71,7 +68,6 @@ public:
     //   use the context.world.SetNext() to set the next state of the cell to dead
     //   use the context.position to get the current cell's position
     context.world.SetNext(context.position, false);
-    //throw std::logic_error("Die action not implemented yet");
   }
 };
 
@@ -80,7 +76,6 @@ public:
   void Execute(const AgentContext& context) override {
     // see hints in DieAction
     context.world.SetNext(context.position, true);
-    //throw std::logic_error("Born action not implemented yet");
   }
 };
 
@@ -89,7 +84,6 @@ public:
   void Execute(const AgentContext& context) override {
     // see hints in DieAction
     context.world.SetNext(context.position, true);
-    //throw std::logic_error("StayAlive action not implemented yet");
   }
 };
 
@@ -98,7 +92,6 @@ public:
   void Execute(const AgentContext& context) override {
     // see hints in DieAction
     context.world.SetNext(context.position, false);
-    //throw std::logic_error("StayDead action not implemented yet");
   }
 };
 }  // namespace hexagon
@@ -126,11 +119,10 @@ HexagonGameOfLife::HexagonGameOfLife() {
   alive->AddAction(std::make_shared<StayAliveAction>());
   SDL_Log("HEXAGON: Added Action - StayAliveAction\n");
 
-  dead->AddTransition(std::make_shared<Reproduction>(), dead, {born});
+  dead->AddTransition(std::make_shared<Reproduction>(), alive, {born});
   SDL_Log("HEXAGON: Added Transition - Reproduction\n");
   dead->AddAction(std::make_shared<StayDeadAction>());
   SDL_Log("HEXAGON: Added Action - StayDeadAction\n");
-  //SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "HexagonGameOfLife: transitions and actions for alive and dead states not implemented yet");
 
   // end solution
 }
@@ -189,7 +181,7 @@ int HexagonGameOfLife::CountNeighbors(World& world, Point2D point) {
     std::pair(0, 1), std::pair(1, 1)
   };
 
-  bool isEven = point.x % 2 == 0;
+  bool isEven = abs(point.x) % 2 == 0;
 
   if (isEven) {
     for (int i = 0; i <3; i++) {
@@ -208,6 +200,5 @@ int HexagonGameOfLife::CountNeighbors(World& world, Point2D point) {
 
   return neighbors;
 
-  throw std::logic_error("CountNeighbors not implemented yet");
   // end solution
 }
