@@ -24,7 +24,9 @@ void RecursiveBacktrackerExample::Clear(World* world) {
   //   clear visited and the path stack, then start the walk at the
   //   top-left cell in formal units: stack.push_back({0, 0})
   // begin solution
-
+  stack.clear();
+  visited.clear();
+  stack.push_back({0,0});
   // end solution
 }
 
@@ -49,6 +51,19 @@ bool RecursiveBacktrackerExample::Step(World* w) {
   //     LEFT  -> w->SetWest(worldCurrent, false)
   //   return true while there is still work (stack not empty after the move)
   // begin solution
+
+  if (stack.empty()) { return false;}
+
+  Point2D current = stack.back();
+  stack.pop_back();
+
+  //might gotta be y x
+  visited[current.x][current.y] = true;
+
+  for (auto i : getVisitables(w, World::ToFormalCoords({current.x, current.y})));
+
+
+
 
   // end solution
   return false;
