@@ -27,6 +27,7 @@ void RecursiveBacktrackerExample::Clear(World* world) {
   // begin solution
   stack.clear();
   visited.clear();
+  visited.assign(world->GetWidth() * world->GetHeight(), false);
   stack.push_back({0,0});
   // end solution
 }
@@ -54,15 +55,21 @@ bool RecursiveBacktrackerExample::Step(World* w) {
   if (stack.empty()) { return false;}
 
   Point2D current = stack.back();
-  stack.pop_back();
 
   //might gotta be y x
-  visited[current.x][current.y] = true;
+  visited[current.y * w->GetWidth() + current.x] = true;
 
-  for (auto i : getVisitables(w, World::ToFormalCoords({current.x, current.y})));
+  std::vector<Point2D> neighbors = getVisitables(w, current);
+
+  if (neighbors.empty()) {
+    stack.pop_back();
+  }
+  else {
+    stack.push_back();
+  }
 
 
-
+  return true;
 
   // end solution
   return false;
@@ -75,6 +82,10 @@ std::vector<Point2D> RecursiveBacktrackerExample::getVisitables(World* w, const 
   //   keep a candidate only if it is inside the grid
   //   (0 <= x < w->GetWidth(), 0 <= y < w->GetHeight()) and not visited
   // begin solution
+
+  std::vector<Point2D> visitables;
+
+  w->GetNorth()
 
   // end solution
   return {};
