@@ -27,7 +27,6 @@ public:
       index++;
     }
     return randomNumbers[currentIndex];
-    throw new std::runtime_error("SeededRandom::next() is not implemented yet.");
   }
 
   static void setIndex(uint8_t i) { index = i; }

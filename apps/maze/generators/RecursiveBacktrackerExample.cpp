@@ -26,7 +26,7 @@ void RecursiveBacktrackerExample::Clear(World* world) {
   //   top-left cell: stack.push_back({0, 0})
   // begin solution
   stack.clear();
-  visited.clear();
+  //visited.clear();
   visited.assign(world->GetWidth() * world->GetHeight(), false);
   stack.push_back({0,0});
   // end solution
@@ -56,23 +56,45 @@ bool RecursiveBacktrackerExample::Step(World* w) {
 
   Point2D current = stack.back();
 
-  //might gotta be y x
   visited[current.y * w->GetWidth() + current.x] = true;
+  w->SetNodeColor(current, Color::Purple);
 
   std::vector<Point2D> neighbors = getVisitables(w, current);
 
   if (neighbors.empty()) {
     stack.pop_back();
-  }
-  else {
-    stack.push_back();
+    return true;
   }
 
+  //if only one neighbor, pick that one
+  Point2D newPoint = neighbors[0];
 
+  if (neighbors.size() > 1) {
+    newPoint = neighbors[SeededRandom::next() % neighbors.size()];
+  }
+
+  int deltaX = newPoint.x - current.x;
+  int deltaY = newPoint.y - current.y;
+
+  if (deltaY < 0) { //North
+    w->SetNorth(current, false);
+  }
+  else if (deltaX > 0) { //East
+    w->SetEast(current, false);
+  }
+  else if (deltaY > 0) { //South
+    w->SetSouth(current, false);
+  }
+  else if (deltaX < 0) { //West
+    w->SetWest(current, false);
+  }
+
+  w->SetNodeColor(newPoint, Color::Magenta);
+
+  stack.push_back(newPoint);
   return true;
 
   // end solution
-  return false;
 }
 
 std::vector<Point2D> RecursiveBacktrackerExample::getVisitables(World* w, const Point2D& point) {
@@ -82,11 +104,20 @@ std::vector<Point2D> RecursiveBacktrackerExample::getVisitables(World* w, const 
   //   keep a candidate only if it is inside the grid
   //   (0 <= x < w->GetWidth(), 0 <= y < w->GetHeight()) and not visited
   // begin solution
+  Point2D candidates[4] = {{0, -1}, {1, 0}, {0, 1}, {-1, 0} };
 
   std::vector<Point2D> visitables;
 
-  w->GetNorth()
+  for (uint32_t i = 0; i < 4; i++) {
+    Point2D potentialPoint = point + candidates[i];
 
+    if (potentialPoint.x >= 0 && potentialPoint.x < w->GetWidth()
+      && potentialPoint.y >= 0 && potentialPoint.y < w->GetHeight()
+      && !visited[potentialPoint.y * w->GetWidth() + potentialPoint.x]) {
+      visitables.push_back(potentialPoint);
+    }
+  }
+  return visitables;
   // end solution
-  return {};
+  //return {};
 }
