@@ -65,7 +65,6 @@ bool RecursiveBacktrackerExample::Step(World* w) {
     stack.pop_back();
     return true;
   }
-
   //if only one neighbor, pick that one
   Point2D newPoint = neighbors[0];
 
@@ -92,7 +91,8 @@ bool RecursiveBacktrackerExample::Step(World* w) {
   w->SetNodeColor(newPoint, Color::Magenta);
 
   stack.push_back(newPoint);
-  return true;
+
+  return !stack.empty();
 
   // end solution
 }
@@ -108,7 +108,7 @@ std::vector<Point2D> RecursiveBacktrackerExample::getVisitables(World* w, const 
 
   std::vector<Point2D> visitables;
 
-  for (uint32_t i = 0; i < 4; i++) {
+  for (uint8_t i = 0; i < 4; i++) {
     Point2D potentialPoint = point + candidates[i];
 
     if (potentialPoint.x >= 0 && potentialPoint.x < w->GetWidth()

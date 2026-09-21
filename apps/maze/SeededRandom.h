@@ -23,9 +23,6 @@ public:
     if (index >= 100) {
       index = 0;
     }
-    else {
-      index++;
-    }
     return randomNumbers[currentIndex];
   }
 
