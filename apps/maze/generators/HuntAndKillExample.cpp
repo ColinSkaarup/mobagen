@@ -26,8 +26,18 @@ Point2D HuntAndKillExample::randomStartPoint(World* world) {
 
 std::vector<Point2D> HuntAndKillExample::getVisitables(World* w, const Point2D& p) {
   std::vector<Point2D> visitables;
+  std::vector<Point2D> deltas = {{-1, 0}, {0, -1}, {1, 0}, {0, 1}};
 
   // todo: code this
+  for (uint8_t i = 0; i < 4; i++) {
+    Point2D potentialPoint = p + deltas[i];
+
+    if (potentialPoint.x >= 0 && potentialPoint.x < w->GetWidth()
+      && potentialPoint.y >= 0 && potentialPoint.y < w->GetHeight()
+      && !visited[potentialPoint.y][potentialPoint.x]) {
+      visitables.push_back(potentialPoint);
+      }
+  }
 
   return visitables;
 }
@@ -36,6 +46,8 @@ std::vector<Point2D> HuntAndKillExample::getVisitedNeighbors(World* w, const Poi
   std::vector<Point2D> neighbors;
 
   // todo: code this
+
+  //use deltas to iterate through neighbors and check if visited
 
   return neighbors;
 }
