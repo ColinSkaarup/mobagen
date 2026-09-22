@@ -16,6 +16,8 @@ private:
   std::vector<bool> visited;
   std::vector<Point2D> getVisitables(World* w, const Point2D& point);
 
+  static int CoordsToIndex(const World* w, const int x, const int y) ;
+
 public:
   RecursiveBacktrackerExample() = default;
   std::string GetName() override { return "Recursive Back-Tracker"; };

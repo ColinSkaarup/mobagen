@@ -26,10 +26,13 @@ void RecursiveBacktrackerExample::Clear(World* world) {
   //   top-left cell: stack.push_back({0, 0})
   // begin solution
   stack.clear();
-  //visited.clear();
   visited.assign(world->GetWidth() * world->GetHeight(), false);
   stack.push_back({0,0});
   // end solution
+}
+
+int RecursiveBacktrackerExample::CoordsToIndex(const World* w, const int x, const int y) {
+  return ((y * w->GetWidth()) + x);
 }
 
 bool RecursiveBacktrackerExample::Step(World* w) {
@@ -56,7 +59,7 @@ bool RecursiveBacktrackerExample::Step(World* w) {
 
   Point2D current = stack.back();
 
-  visited[current.y * w->GetWidth() + current.x] = true;
+  visited[CoordsToIndex(w, current.x, current.y)] = true;
   w->SetNodeColor(current, Color::Purple);
 
   std::vector<Point2D> neighbors = getVisitables(w, current);
@@ -88,7 +91,7 @@ bool RecursiveBacktrackerExample::Step(World* w) {
     w->SetWest(current, false);
   }
 
-  w->SetNodeColor(newPoint, Color::Magenta);
+  w->SetNodeColor(newPoint, Color::Green);
 
   stack.push_back(newPoint);
 
@@ -113,11 +116,10 @@ std::vector<Point2D> RecursiveBacktrackerExample::getVisitables(World* w, const 
 
     if (potentialPoint.x >= 0 && potentialPoint.x < w->GetWidth()
       && potentialPoint.y >= 0 && potentialPoint.y < w->GetHeight()
-      && !visited[potentialPoint.y * w->GetWidth() + potentialPoint.x]) {
+      && !visited[CoordsToIndex(w, potentialPoint.x, potentialPoint.y)]) {
       visitables.push_back(potentialPoint);
     }
   }
   return visitables;
   // end solution
-  //return {};
 }
