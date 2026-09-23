@@ -12,11 +12,8 @@ private:
   // the path is tracked in grid units: (0, 0) is the top-left cell,
   // x grows right and y grows down — the same units as the World API.
   std::vector<Point2D> stack;
-  //std::map<int, std::map<int, bool>> visited;  // naive. not optimal
-  std::vector<bool> visited;
+  std::vector<bool> visited; //changed to bool
   std::vector<Point2D> getVisitables(World* w, const Point2D& point);
-
-  static int CoordsToIndex(const World* w, const int x, const int y) ;
 
 public:
   RecursiveBacktrackerExample() = default;

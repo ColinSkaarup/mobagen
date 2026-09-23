@@ -14,6 +14,9 @@ public:
   // Clears and resets all data from the generator
   virtual void Clear(World* world) = 0;
   virtual ~MazeGeneratorBase() = default;
+
+protected:
+  int CoordsToIndex(const World* w, const int x, const int y) const;
 };
 
 #endif  // MAZEGENERATORBASE_H

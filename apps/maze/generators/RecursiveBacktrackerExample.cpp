@@ -31,10 +31,6 @@ void RecursiveBacktrackerExample::Clear(World* world) {
   // end solution
 }
 
-int RecursiveBacktrackerExample::CoordsToIndex(const World* w, const int x, const int y) {
-  return ((y * w->GetWidth()) + x);
-}
-
 bool RecursiveBacktrackerExample::Step(World* w) {
   // todo: implement one iteration of the recursive backtracker
   // hint:
