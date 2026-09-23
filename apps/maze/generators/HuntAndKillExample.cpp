@@ -7,6 +7,7 @@ bool HuntAndKillExample::Step(World* w) {
   // todo: code this
 
 
+  //if we have no more cells to travel to
   Point2D nothing = {INT_MAX, INT_MAX};
   for (auto point : stack) {
     if (point == nothing) {
@@ -68,8 +69,10 @@ void HuntAndKillExample::Clear(World* world) {
 Point2D HuntAndKillExample::randomStartPoint(World* world) {
   // Todo: improve this if you want
   for (int y = 0; y < world->GetHeight(); y++)
-    for (int x = 0; x < world->GetWidth(); x++)
+    for (int x = 0; x < world->GetWidth(); x++) {
+      world->SetNodeColor({x, y}, Color::Black);
       if (!visited[CoordsToIndex(world, x, y)]) return {x, y};
+    }
   return {INT_MAX, INT_MAX};
 }
 

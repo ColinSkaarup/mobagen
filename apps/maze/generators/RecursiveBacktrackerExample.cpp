@@ -61,6 +61,7 @@ bool RecursiveBacktrackerExample::Step(World* w) {
   std::vector<Point2D> neighbors = getVisitables(w, current);
 
   if (neighbors.empty()) {
+    w->SetNodeColor(current, Color::Black);
     stack.pop_back();
     return true;
   }

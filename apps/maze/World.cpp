@@ -119,7 +119,7 @@ void World::OnDraw() {
   float dispX = (winW / 2.0f) - linesize * (width / 2.0f) - linesize / 2.0f;
   float dispY = (winH / 2.0f) - linesize * (height / 2.0f) - linesize / 2.0f;
 
-  const ImU32 wallColor = IM_COL32(255, 255, 255, 255);
+  const ImU32 wallColor = IM_COL32(126, 0, 255, 255); //purple now
 
   // Draw walls: each pair (data[i] = north wall, data[i+1] = west wall)
   for (int i = 0; i < (int)data.size(); i += 2) {
