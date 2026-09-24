@@ -1,5 +1,6 @@
 #include "PrimExample.h"
 #include "../World.h"
+#include "../SeededRandom.h"
 #include "Random.h"
 
 bool PrimExample::Step(World* w) {
@@ -7,14 +8,44 @@ bool PrimExample::Step(World* w) {
 
   if (toBeVisited.empty()) { return false; }
 
-  Point2D current = toBeVisited.back();
+  Point2D current = toBeVisited[SeededRandom::next() % toBeVisited.size()];
+  toBeVisited.erase(std::find(toBeVisited.begin(), toBeVisited.end(), current));
+  visited[CoordsToIndex(w, current.x, current.y)] = true;
+  w->SetNodeColor(current, Color::Black);
 
-  for (auto point : getVisitables(w, current)) {
-    toBeVisited.push_back(point);
+  std::vector<Point2D> neighbors = getVisitedNeighbors(w, current);
+
+  if (!neighbors.empty()) {
+    auto neighborRandom = SeededRandom::next() % neighbors.size();
+
+    int deltaX = current.x - neighbors[neighborRandom].x;
+    int deltaY = current.y - neighbors[neighborRandom].y;
+
+    //flipped from recursive code
+    if (deltaY < 0) { //South
+      w->SetSouth(current, false);
+    }
+    else if (deltaX > 0) { //West
+      w->SetWest(current, false);
+    }
+    else if (deltaY > 0) { //North
+      w->SetNorth(current, false);
+    }
+    else if (deltaX < 0) { //East
+      w->SetEast(current, false);
+    }
   }
 
-  return true;
+  for (auto point : getVisitables(w, current)) {
+    if (std::find(toBeVisited.begin(), toBeVisited.end(), point) == toBeVisited.end()) {
+      toBeVisited.push_back(point);
+      w->SetNodeColor(point, Color::Blue);
+    }
+  }
+
+  return !toBeVisited.empty();
 }
+
 void PrimExample::Clear(World* world) {
   toBeVisited.clear();
   visited.clear();
