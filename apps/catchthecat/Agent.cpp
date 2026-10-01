@@ -7,6 +7,19 @@
 
 using namespace std;
 
+static vector<Point2D> getVisitableNeighbors(const CatWorld* w, const Point2D cat, const unordered_map<Point2D, bool>& visited, const unordered_set<Point2D>& frontierSet) {
+  vector<Point2D> neighbors;
+
+  for (const Point2D point : CatWorld::neighbors(cat)) {
+    if (!w->isValidPosition(point)) continue;
+    if (point == cat) continue;
+    if (w->getContent(point)) continue;
+    if (visited.at(point)) continue;
+    if (frontierSet.count(point) == 1) continue;
+    neighbors.push_back(point);
+  }
+}
+
 std::vector<Point2D> Agent::generatePath(CatWorld* w) {
   unordered_map<Point2D, Point2D> cameFrom;  // to build the flowfield and build the path
   queue<Point2D> frontier;                   // to store next ones to visit
@@ -28,6 +41,13 @@ std::vector<Point2D> Agent::generatePath(CatWorld* w) {
     // for every neighbor set the cameFrom
     // enqueue the neighbors to frontier and frontierset
     // do this up to find a visitable border and break the loop
+
+    Point2D current = frontier.front();
+    frontierSet.erase(current);
+    visited.at(current) = true;
+
+    std::vector<Point2D> neighbors = getVisitableNeighbors(w, current);
+
   }
 
   // if the border is not infinity, build the path from border to the cat using the camefrom map
