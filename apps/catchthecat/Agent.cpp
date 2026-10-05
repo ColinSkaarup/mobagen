@@ -18,6 +18,7 @@ static vector<Point2D> getVisitableNeighbors(const CatWorld* w, const Point2D ca
     if (frontierSet.count(point) == 1) continue;
     neighbors.push_back(point);
   }
+  return neighbors;
 }
 
 std::vector<Point2D> Agent::generatePath(CatWorld* w) {
