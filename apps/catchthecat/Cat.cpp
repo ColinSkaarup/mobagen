@@ -3,6 +3,9 @@
 #include <stdexcept>
 
 Point2D Cat::Move(CatWorld* world) {
+
+  //priority queue prolly
+  
   auto rand = Random::Range(0, 5);
   auto pos = world->getCat();
   switch (rand) {
