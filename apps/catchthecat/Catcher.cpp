@@ -4,11 +4,10 @@
 Point2D Catcher::Move(CatWorld* world) {
   auto side = world->getWorldSideSize() / 2;
 
-  for (;;) {
-    auto path = generatePath(world);
+  auto path = generatePath(world);
 
-    return path.front();
-  }
+  return path.front();
+
 
   // for (;;) {
   //   Point2D p = path.front();

@@ -21,19 +21,51 @@ static vector<Point2D> getVisitableNeighbors(const CatWorld* w, const Point2D ca
   return neighbors;
 }
 
+inline int heuristic(Point2D p1, Point2D p2) {
+  return abs(p1.x - p2.x) + abs(p1.y - p2.y);
+}
+
+template<typename T, typename priority_t>
+struct PriorityQueue {
+  typedef std::pair<priority_t, T> PQElement;
+  std::priority_queue<PQElement, std::vector<PQElement>,
+                 std::greater<PQElement>> elements;
+
+  inline bool empty() const {
+    return elements.empty();
+  }
+
+  inline void put(T item, priority_t priority) {
+    elements.emplace(priority, item);
+  }
+
+  T get() {
+    T best_item = elements.top().second;
+    elements.pop();
+    return best_item;
+  }
+};
+
 std::vector<Point2D> Agent::generatePath(CatWorld* w) {
+  //based on https://www.redblobgames.com/pathfinding/a-star/implementation.html
   unordered_map<Point2D, Point2D> cameFrom;  // to build the flowfield and build the path
-  queue<Point2D> frontier;                   // to store next ones to visit
+  unordered_map<Point2D, int> accumCost;
+  //queue<Point2D> frontier;                   // to store next ones to visit
+  //unordered_map<Point2D, int> frontier;
+  priority_queue<pair<Point2D, int>> frontier;
+  //priority_queue<Point2D, int> frontier;
   unordered_set<Point2D> frontierSet;        // OPTIMIZATION to check faster if a point is in the queue
   unordered_map<Point2D, bool> visited;      // use .at() to get data, if the element dont exist [] will give you wrong results
 
   // bootstrap state
   auto catPos = w->getCat();
-  frontier.emplace(catPos);
+  frontier.emplace(make_pair<Point2D, int>(catPos, 0)); //0 because start
   frontierSet.insert(catPos);
+  cameFrom[catPos] = catPos;
+  accumCost[catPos] = 0;
+
   Point2D infinity = {INT32_MAX, INT32_MAX};
   Point2D borderExit = infinity;  // sentinel: no border found yet
-
 
   while (!frontier.empty()) {
     // get the current from frontier
@@ -45,21 +77,25 @@ std::vector<Point2D> Agent::generatePath(CatWorld* w) {
     // enqueue the neighbors to frontier and frontierset
     // do this up to find a visitable border and break the loop
 
-    Point2D current = frontier.front();
+    Point2D current = frontier.get();
     frontierSet.erase(current);
     visited.at(current) = true;
 
     vector<Point2D> neighbors = getVisitableNeighbors(w, current, visited, frontierSet);
 
     for (Point2D neigh : neighbors) {
-      cameFrom.at(neigh) = current;
-      frontier.push(neigh);
-      frontierSet.insert(neigh);
-
       //neighbor is border
       if (w->catWinsOnSpace(neigh)) {
         borderExit = neigh;
         break;
+      }
+      int newCost = accumCost.at(current) + 1; //each node is weighted 1
+      if (accumCost.find(neigh) == accumCost.end() || newCost < accumCost[neigh]) {
+        accumCost[neigh] = newCost;
+        int priority = newCost + heuristic(neigh, borderExit);
+        frontier.put(neigh, priority);
+        frontierSet.insert(neigh);
+        cameFrom[neigh] = current;
       }
     }
   }
