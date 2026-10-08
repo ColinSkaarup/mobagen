@@ -77,7 +77,7 @@ std::vector<Point2D> Agent::generatePath(CatWorld* w) {
         break;
       }
 
-        frontier.push(neigh);
+        frontier.emplace(neigh);
         frontierSet.insert(neigh);
       }
     if (borderExit.x != INT32_MAX)
