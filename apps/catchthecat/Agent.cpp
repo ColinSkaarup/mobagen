@@ -4,6 +4,9 @@
 #include <unordered_map>
 #include <unordered_set>
 #include "World.h"
+#include <utility>
+
+//std::priority_queue<std::pair<float, Point2D>, std::vector<std::pair<float, Point2D>>, std::greater<std::pair<float, Point2D>>>;
 
 using namespace std;
 
@@ -28,13 +31,21 @@ inline int heuristic(Point2D p1, Point2D p2) {
 std::vector<Point2D> Agent::generatePath(CatWorld* w) {
   //based on https://www.redblobgames.com/pathfinding/a-star/implementation.html
   unordered_map<Point2D, Point2D> cameFrom;  // to build the flowfield and build the path
-  queue<Point2D> frontier;                   // to store next ones to visit
+  using MyPair = std::pair<float, glm::vec<2, int>>;
+  using MyVector = std::vector<MyPair>;
+
+  priority_queue<
+    pair<float ,Point2D>,
+    vector<pair<float,Point2D>>,
+    greater<pair<float,Point2D>>
+  > frontier;                   // to store next ones to visit
   unordered_set<Point2D> frontierSet;        // OPTIMIZATION to check faster if a point is in the queue
   unordered_map<Point2D, bool> visited;      // use .at() to get data, if the element dont exist [] will give you wrong results
 
   // bootstrap state
   auto catPos = w->getCat();
-  frontier.emplace(catPos);
+  pair<float, Point2D> p1 = {0, catPos};
+  frontier.push({0,catPos});
   frontierSet.insert(catPos);
   cameFrom[catPos] = catPos;
 
@@ -51,7 +62,7 @@ std::vector<Point2D> Agent::generatePath(CatWorld* w) {
     // enqueue the neighbors to frontier and frontierset
     // do this up to find a visitable border and break the loop
 
-    Point2D current = frontier.front();
+    Point2D current = frontier.top().second;
     frontier.pop();
     frontierSet.erase(current);
     visited[current] = true;
