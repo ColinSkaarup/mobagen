@@ -24,15 +24,14 @@ static vector<Point2D> getVisitableNeighbors(const CatWorld* w, const Point2D ca
   return neighbors;
 }
 
-inline int heuristic(Point2D p1, Point2D p2) {
-  return abs(p1.x - p2.x) + abs(p1.y - p2.y);
+inline int heuristic(Point2D p1, int sideSize) {
+  return min((sideSize/2 - abs(p1.x)), (sideSize/2 - abs(p1.y)));
 }
 
 std::vector<Point2D> Agent::generatePath(CatWorld* w) {
   //based on https://www.redblobgames.com/pathfinding/a-star/implementation.html
   unordered_map<Point2D, Point2D> cameFrom;  // to build the flowfield and build the path
-  using MyPair = std::pair<float, glm::vec<2, int>>;
-  using MyVector = std::vector<MyPair>;
+  unordered_map<Point2D, float> accumCost;
 
   priority_queue<
     pair<float ,Point2D>,
@@ -43,11 +42,11 @@ std::vector<Point2D> Agent::generatePath(CatWorld* w) {
   unordered_map<Point2D, bool> visited;      // use .at() to get data, if the element dont exist [] will give you wrong results
 
   // bootstrap state
-  auto catPos = w->getCat();
-  pair<float, Point2D> p1 = {0, catPos};
-  frontier.push({0,catPos});
+  Point2D catPos = w->getCat();
+  frontier.emplace(0, catPos);
   frontierSet.insert(catPos);
   cameFrom[catPos] = catPos;
+  accumCost[catPos] = 0;
 
   Point2D infinity = {INT32_MAX, INT32_MAX};
   Point2D borderExit = infinity;  // sentinel: no border found yet
@@ -70,16 +69,23 @@ std::vector<Point2D> Agent::generatePath(CatWorld* w) {
     vector<Point2D> neighbors = getVisitableNeighbors(w, current, visited, frontierSet);
 
     for (Point2D neigh : neighbors) {
-      //neighbor is border, early exit
       cameFrom[neigh] = current;
+
+      //neighbor is border, early exit
       if (w->catWinsOnSpace(neigh)) {
         borderExit = neigh;
         break;
       }
 
-        frontier.emplace(neigh);
+      float newCost = accumCost[current] + 1; //each cell has weight 1
+      if (accumCost.find(neigh) == accumCost.end() || newCost < accumCost[neigh]) {
+        accumCost[neigh] = newCost;
+        float priority = newCost + heuristic(neigh, w->getWorldSideSize());
+        frontier.emplace(priority, neigh);
         frontierSet.insert(neigh);
       }
+
+    }
     if (borderExit.x != INT32_MAX)
       break;
     }
@@ -98,6 +104,4 @@ std::vector<Point2D> Agent::generatePath(CatWorld* w) {
     }
 
     return path;
-
-  return vector<Point2D>();
 }
