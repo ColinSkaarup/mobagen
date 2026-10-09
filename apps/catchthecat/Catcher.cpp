@@ -20,13 +20,10 @@ Point2D Catcher::Move(CatWorld* world) {
 
     //cat is potentially in tunnel
     if (path.size() > 6) {
-      spot = *(path.end() - 2);
+      spot = *(path.end() - 1);
     }
-    else if (path.size() > 5) {
-      spot = *(path.begin() + path.size() / 2);
-    }
-    else if (path.size() >= 5) {
-      spot = *(path.begin() + 2);
+    else if (distX > 2 && distY > 2) {
+      spot = *(path.begin() + 1);
     }
 
     if (world->catcherCanMoveToPosition(spot)) {
