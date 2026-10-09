@@ -15,14 +15,17 @@ Point2D Catcher::Move(CatWorld* world) {
   if (!path.empty()) {
     Point2D spot = path.front();
 
+    float distX = glm::distance((float)world->getCat().x, (float)spot.x);
+    float distY = glm::distance((float)world->getCat().y, (float)spot.y);
+
     //cat is potentially in tunnel
-    if (path.size() > 8) {
+    if (path.size() > 6) {
       spot = *(path.end() - 2);
     }
-    else if (path.size() > 6) {
+    else if (path.size() > 5) {
       spot = *(path.begin() + path.size() / 2);
     }
-    else if (path.size() > 3) {
+    else if (path.size() >= 5) {
       spot = *(path.begin() + 2);
     }
 
@@ -33,5 +36,11 @@ Point2D Catcher::Move(CatWorld* world) {
   }
 
   //cat is caught
-  return {Random::Range(-side, side), Random::Range(-side, side)};
+  Point2D randomPoint = {Random::Range(-side, side), Random::Range(-side, side)};
+  do {
+    if (world->catcherCanMoveToPosition(randomPoint)) {
+      return randomPoint;
+    }
+    randomPoint = {Random::Range(-side, side), Random::Range(-side, side)};
+  } while (!world->catCanMoveToPosition(randomPoint));
 }
